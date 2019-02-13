@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ -e /dev/pts/0 ] || exit 0
+
+exec </dev/pts/0 1>/dev/pts/0 2>&1
+
+while :
+do
+	sleep 1
+	read -p "[press ENTER to login]" REPLY
+	/bin/bash --login
+done
