@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cd /etc/network
+sleep 1
+sv start logread >/dev/null
+echo
+read -p "[Press ENTER to start shell or CTRL+C to terminate] " REPLY
+if [ "$REPLY" = "stop" ]
+then
+	kill -HUP 1
+else
+	sv stop logread >/dev/null
+	exec /bin/bash --login
+fi

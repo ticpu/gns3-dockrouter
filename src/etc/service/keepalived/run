@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 2019 Jérôme Poulin <jeromepoulin@gmail.com>
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,4 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-docker build -t ${1-gns3-dockrouter} src/
+. /etc/dockrouter/functions.sh
+
+check_config /etc/keepalived.conf keepalived.conf || exit 0
+exec /usr/sbin/keepalived -f /etc/network/keepalived.conf -P -R -D -n

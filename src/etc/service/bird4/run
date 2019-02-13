@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 2019 Jérôme Poulin <jeromepoulin@gmail.com>
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,4 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-docker build -t ${1-gns3-dockrouter} src/
+. /etc/dockrouter/functions.sh
+
+check_config /etc/bird/bird.conf bird4.conf || exit 0
+mkdir -p /run/bird
+exec /usr/sbin/bird -c /etc/network/bird4.conf -f
