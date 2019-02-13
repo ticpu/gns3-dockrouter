@@ -15,6 +15,6 @@
 
 . /etc/dockrouter/functions.sh
 
-check_config /etc/bird/bird6.conf bird6.conf || exit 0
+check_config /etc/bird/bird6.conf bird6 || exit 0
 mkdir -p /run/bird
-exec /usr/sbin/bird6 -c /etc/network/bird6.conf -f
+exec /usr/sbin/bird6 -c "$CONFDIR/`find_config_name bird6`" -f

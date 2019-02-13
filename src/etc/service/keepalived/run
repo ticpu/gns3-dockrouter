@@ -15,5 +15,5 @@
 
 . /etc/dockrouter/functions.sh
 
-check_config /etc/keepalived.conf keepalived.conf || exit 0
-exec /usr/sbin/keepalived -f /etc/network/keepalived.conf -P -R -D -n
+check_config /etc/keepalived.conf keepalived || exit 0
+exec /usr/sbin/keepalived -f "$CONFDIR/`find_config_name keepalived`" -P -R -D -n

@@ -37,12 +37,15 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt
 		inotify-tools \
 		iproute2 \
 		iptables \
+		iputils-arping \
+		iputils-ping \
+		iputils-tracepath \
 		keepalived \
 		openvpn \
 		psmisc \
+		mtr-tiny \
 		nano \
 		runit \
-		screen \
 		vim && \
 	apt-get clean && \
 	busybox --install && \

@@ -12,36 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SVDIR=/etc/service
+CONFDIR=/etc/network
+
+find_config_name () {
+	local config_name_file="/etc/service/$1/configname"
+	[ -s "$config_name_file" ] || return 1
+	cat "$config_name_file"
+}
+
+find_service_name () {
+	grep -lx "$1" $SVDIR/*/configname | \
+		sed -rne 's|/?etc/service/([^/]+)/configname|\1|p'
+}
+
+check_service_start () {
+	[ -e "$CONFDIR/disabled/$1" -o ! -e "$CONFDIR/$1" ]
+}
+
 check_config () {
-	# Usage: check_config SOURCE TARGET_NAME
+	# Usage: check_config SOURCE SERVICE_NAME
 	# Check if configuration file or folder is missing and copy it from SOURCE.
 	#
-	# If TARGET_NAME exists in /etc/network, return 0.
-	# If TARGET_NAME exists in /etc/disabled, return 1.
-	# If TARGET_NAME doesn't exist, copy it from SOURCE and adjust permissions,
-	# then return 2.
+	# If TARGET_NAME is missing, copy it from SOURCE and adjust permissions,
+	# If TARGET_NAME exists in /etc/network and not ./disabled, return 0.
+	# If TARGET_NAME exists in /etc/network/disabled or is missing from
+	# /etc/network, sv stop $SERVICE_NAME.
 	local source="$1"
-	local target_name="$2"
-	local target_path="/etc/network"
+	local service_name="$2"
+	local config_name="`find_config_name $service_name`"
 
-	if [ ! -d "$target_path/disabled" ]; then
-		install -d -m777 "$target_path/disabled"
+	if [ ! -d "$CONFDIR/disabled" ]; then
+		install -d -m777 "$CONFDIR/disabled"
 	fi
 
-	if [ -e "$target_path/$target_name" ]; then
-		return 0
+	if [ -z "$config_name" ]; then
+		sv down "$service_name"
+		return 1
 	fi
 
-	if [ ! -e "$target_path/disabled/$target_name" ]; then
-		cp -r "$source" "$target_path/disabled/$target_name"
-		chmod -R a+rwX "$target_path/disabled/$target_name" 
+	if [ ! -e "$CONFDIR/$config_name" -a ! -e "$CONFDIR/disabled/$config_name" ]; then
+		cp -r "$source" "$CONFDIR/disabled/$config_name"
+		chmod -R a+rwX "$CONFDIR/disabled/$config_name"
 	fi
 
-	while [ -e "$target_path/disabled/$target_name" -o ! -e "$target_path/$target_name" ]
-	do
-		inotifywait -qq -e create,delete,move,moved_from,moved_to "$target_path/disabled/" "$target_path/"
-		sleep 1
-	done
+	if check_service_start "$config_name"; then
+		sv down "$service_name"
+		return 1
+	fi
 
 	return 0
 }
