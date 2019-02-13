@@ -14,5 +14,5 @@
 # limitations under the License.
 
 env | egrep -v '^PATH=' >> /etc/environment
-ifup -a
+echo 1 | tee /proc/sys/net/ipv?/conf/*/forwarding > /dev/null
 exec runit-docker
