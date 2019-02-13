@@ -1,6 +1,0 @@
-#!/bin/sh
-
-nohup /etc/runit/shell </dev/null >/dev/null 2>&1 &
-ifup -a
-
-exit 0

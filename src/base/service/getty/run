@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cd /etc/network
+sleep 1
+read -p "[press ENTER to login or stop and ENTER to terminate] " REPLY
+if [ "$REPLY" = "stop" ]
+then
+	kill -HUP 1
+else
+	exec /bin/bash --login
+fi
