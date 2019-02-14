@@ -35,6 +35,7 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt
 		bash-completion \
 		bird \
 		busybox \
+		easy-rsa \
 		ifupdown \
 		inotify-tools \
 		iproute2 \
@@ -51,14 +52,38 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt
 		runit \
 		tcpdump \
 		vim && \
+	apt-get install -qy quagga && \
 	apt-get clean && \
 	busybox --install && \
 	rm -r /var/lib/apt/lists/*
 
+COPY etc/dockrouter/openvpn-ca/ /etc/dockrouter/openvpn-ca/
+WORKDIR /etc/dockrouter/openvpn-ca
+RUN /bin/bash -c "exec 2>&1 && \
+	rm -f /dev/random && \
+	ln -s /dev/urandom /dev/random && \
+	ln -s /usr/share/easy-rsa/* . && \
+	ln -s openssl-1.0.0.cnf openssl.cnf && \
+	. ./vars-dockrouter && \
+	./clean-all && \
+	rm pkitool && \
+	sed -r -e 's/-newkey rsa:[^ ]+//' -e 's/-keyout /-key /' /usr/share/easy-rsa/pkitool > pkitool && \
+	chmod +x pkitool && \
+	install -m0600 -t keys/ ca.key ta.key && \
+	cp dh2048.pem keys/ && \
+	./pkitool --initca && \
+	ln -sf /usr/share/easy-rsa/pkitool && \
+	for I in {1..9}; \
+	do \
+		yes '' | ./pkitool --pkcs12 client-\$I 2>/dev/null && \
+		yes '' | ./pkitool --server --pkcs12 server-\$I 2>/dev/null; \
+	done"
 COPY --from=build /app/runit-docker/runit-docker.so /lib/runit-docker.so
 COPY --from=build /app/runit-docker/runit-docker /sbin/runit-docker
-RUN rm -r /etc/runit /etc/service && \
-	chmod +x /sbin/runit-docker
+RUN rm -r /etc/runit /etc/quagga /etc/service && \
+	chmod +x /sbin/runit-docker && \
+	ln -s /etc/network/quagga /etc/quagga
 COPY etc/ /etc/
+WORKDIR /
 COPY entrypoint.sh /
 CMD ["/entrypoint.sh"]

@@ -1,0 +1,3 @@
+For traning purposes, the keys used in this appliance are *INSECURE* and 
+will be the same accross rebuilds so not to break already running OpenVPN
+instances in case of redeployment.

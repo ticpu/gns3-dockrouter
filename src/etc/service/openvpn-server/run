@@ -13,15 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd /etc/network
-sleep 1
-sv start logread >/dev/null
-echo
-read -p "[Press ENTER to start shell or CTRL+C to terminate] " REPLY
-if [ "$REPLY" = "stop" ]
-then
-	kill -HUP 1
-else
-	sv stop logread >/dev/null
-	exec /bin/bash --login
-fi
+. /etc/dockrouter/functions.sh
+
+check_config /etc/openvpn/openvpn-server.conf openvpn-server || exit 0
+exec /usr/sbin/openvpn "$CONFDIR/`find_config_name openvpn-server`"
