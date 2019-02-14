@@ -15,6 +15,7 @@
 FROM ubuntu:bionic AS build
 
 RUN apt-get update && \
+	apt-get dist-upgrade -qy && \
 	apt-get install -qy \
 		build-essential \
 		curl
@@ -29,6 +30,7 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt
 	echo "deb http://archive.ubuntu.com/ubuntu/ bionic-security main universe" >> /etc/apt/sources.list && \
 	echo "deb http://archive.ubuntu.com/ubuntu/ bionic-updates main universe" >> /etc/apt/sources.list && \
 	apt-get update && \
+	apt-get dist-upgrade -qy && \
 	apt-get install -qy --no-install-recommends \
 		bash-completion \
 		bird \
@@ -41,11 +43,13 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt
 		iputils-ping \
 		iputils-tracepath \
 		keepalived \
+		lldpd \
 		openvpn \
 		psmisc \
 		mtr-tiny \
 		nano \
 		runit \
+		tcpdump \
 		vim && \
 	apt-get clean && \
 	busybox --install && \
