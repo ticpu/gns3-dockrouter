@@ -2,6 +2,7 @@
 1. Download dockrouter.gns3a from the repository.
 1. In GNS3, go in File, Import appliance and select the file you just downloaded.
 1. Go through the Wizard using the default values.
+1. Right click the device and select Configure template. Type your timezone in the Env. variables field (ex: TZ=EST5EDT)
 1. Add the device on the network diagram, GNS3 will pull the Docker image.
 1. You can now edit the network configuration using right click, edit config; on the device.
 
