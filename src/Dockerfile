@@ -82,7 +82,8 @@ COPY --from=build /app/runit-docker/runit-docker.so /lib/runit-docker.so
 COPY --from=build /app/runit-docker/runit-docker /sbin/runit-docker
 RUN rm -r /etc/runit /etc/quagga /etc/service && \
 	chmod +x /sbin/runit-docker && \
-	ln -s /etc/network/quagga /etc/quagga
+	ln -s /etc/network/quagga /etc/quagga && \
+	mv /usr/sbin/tcpdump /usr/bin/
 COPY etc/ /etc/
 WORKDIR /
 COPY entrypoint.sh /
