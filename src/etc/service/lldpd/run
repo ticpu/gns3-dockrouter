@@ -13,4 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+logger "Starting lldpd"
 exec chpst -0 lldpd -d >/dev/null 2>&1

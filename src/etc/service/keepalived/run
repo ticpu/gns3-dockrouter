@@ -16,4 +16,5 @@
 . /etc/dockrouter/functions.sh
 
 check_config /etc/keepalived.conf keepalived || exit 0
+logger "Starting keepalived"
 exec /usr/sbin/keepalived -f "$CONFDIR/`find_config_name keepalived`" -P -R -D -n

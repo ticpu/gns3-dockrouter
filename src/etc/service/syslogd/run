@@ -13,4 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+logger "Starting syslogd"
 exec syslogd -C128 -n
