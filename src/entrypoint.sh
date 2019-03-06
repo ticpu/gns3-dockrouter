@@ -18,5 +18,7 @@ echo 0 | tee /proc/sys/net/ipv4/conf/*/rp_filter > /dev/null
 echo 1 | tee /proc/sys/net/ipv4/ip_forward > /dev/null
 echo 1 | tee /proc/sys/net/ipv?/ip_nonlocal_bind > /dev/null
 echo 1 | tee /proc/sys/net/ipv6/conf/*/forwarding > /dev/null
+echo 0 | tee /proc/sys/net/ipv6/conf/*/accept_ra > /dev/null
+echo 0 | tee /proc/sys/net/ipv6/conf/*/autoconf > /dev/null
 rm -rf /run/*
 exec runit-docker
