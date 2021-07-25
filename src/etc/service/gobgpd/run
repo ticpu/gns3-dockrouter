@@ -15,7 +15,6 @@
 
 . /etc/dockrouter/functions.sh
 
-check_config /etc/bird/bird6.conf bird6 || exit 0
-mkdir -p /run/bird
-logger "Starting bird6"
-exec /usr/sbin/bird6 -c "$CONFDIR/`find_config_name bird6`" -f
+check_config /etc/gobgpd.yaml gobgpd || exit 0
+logger "Starting gobgpd"
+exec /usr/bin/gobgpd -t yaml -f "$CONFDIR/`find_config_name gobgpd`" -s syslogd --disable-stdlog

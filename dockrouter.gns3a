@@ -1,18 +1,18 @@
 {
-    "name": "Dockrouter",
+    "name": "Dockrouter2",
     "category": "router",
     "description": "Multi-usage Docker container to use with GNS3.",
     "vendor_name": "",
     "vendor_url": "https://github.com/ticpu/gns3-dockrouter",
     "documentation_url": "https://github.com/ticpu/gns3-dockrouter/wiki",
-    "product_name": "Dockrouter",
+    "product_name": "Dockrouter2",
     "registry_version": 3,
     "status": "stable",
     "maintainer": "Jérôme Poulin",
     "maintainer_email": "jeromepoulin@gmail.com",
     "docker": {
-        "adapters": 4,
-        "image": "ticpu/gns3-dockrouter",
+        "adapters": 8,
+        "image": "docker.cauca.ca/gns3-dockrouter2",
         "console_type": "telnet"
     }
 }

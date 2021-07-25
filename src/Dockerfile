@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ubuntu:bionic AS build
+FROM ubuntu:focal AS build
 
 RUN apt-get update && \
 	apt-get dist-upgrade -qy && \
@@ -24,18 +24,22 @@ ADD https://github.com/pixers/runit-docker/raw/ac80adf953c4f533abb5d204575754e54
 ADD https://github.com/pixers/runit-docker/raw/ac80adf953c4f533abb5d204575754e54b6b7b23/runit-docker.c runit-docker.c
 RUN gcc -shared -std=c99 -Wall -O2 -fPIC -D_POSIX_SOURCE -D_GNU_SOURCE -o runit-docker.so runit-docker.c -ldl
 
-FROM ubuntu:bionic AS gns3-dockrouter
+FROM ubuntu:focal AS gns3-dockrouter
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt/sources.list && \
-	echo "deb http://archive.ubuntu.com/ubuntu/ bionic-security main universe" >> /etc/apt/sources.list && \
-	echo "deb http://archive.ubuntu.com/ubuntu/ bionic-updates main universe" >> /etc/apt/sources.list && \
+RUN echo "deb http://archive.ubuntu.com/ubuntu/ focal main universe" > /etc/apt/sources.list && \
+	echo "deb http://archive.ubuntu.com/ubuntu/ focal-security main universe" >> /etc/apt/sources.list && \
+	echo "deb http://archive.ubuntu.com/ubuntu/ focal-updates main universe" >> /etc/apt/sources.list && \
+	echo "deb http://archive.ubuntu.com/ubuntu/ bionic universe" >> /etc/apt/sources.list && \
+	echo "path-include=/usr/share/doc/bird2/*" >> /etc/dpkg/dpkg.cfg.d/excludes && \
+	export DEBIAN_FRONTEND=noninteractive && \
 	apt-get update && \
 	apt-get dist-upgrade -qy && \
 	apt-get install -qy --no-install-recommends \
 		bash-completion \
-		bird \
+		bird2 \
 		busybox \
-		easy-rsa \
+		easy-rsa=2.2.2-2 \
+		gobgpd \
 		ifupdown \
 		inotify-tools \
 		iproute2 \
@@ -52,7 +56,6 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ bionic main universe" > /etc/apt
 		runit \
 		tcpdump \
 		vim && \
-	apt-get install -qy quagga && \
 	apt-get clean && \
 	busybox --install && \
 	rm -r /var/lib/apt/lists/*
@@ -80,9 +83,8 @@ RUN /bin/bash -c "exec 2>&1 && \
 	done"
 COPY --from=build /app/runit-docker/runit-docker.so /lib/runit-docker.so
 COPY --from=build /app/runit-docker/runit-docker /sbin/runit-docker
-RUN rm -r /etc/runit /etc/quagga /etc/service && \
+RUN rm -r /etc/runit /etc/service && \
 	chmod +x /sbin/runit-docker && \
-	ln -s /etc/network/quagga /etc/quagga && \
 	mv /usr/sbin/tcpdump /usr/bin/
 COPY etc/ /etc/
 WORKDIR /
