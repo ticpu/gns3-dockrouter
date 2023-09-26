@@ -55,7 +55,8 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ focal main universe" > /etc/apt/
 		nano \
 		runit \
 		tcpdump \
-		vim && \
+		vim \
+		wireguard-tools && \
 	apt-get clean && \
 	busybox --install && \
 	rm -r /var/lib/apt/lists/*
